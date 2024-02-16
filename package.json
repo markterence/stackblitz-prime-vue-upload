@@ -1,0 +1,19 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "HOST=0.0.0.0 nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "nuxt": "^3.10.1",
+    "primevue": "^3.48.1"
+  },
+  "devDependencies": {
+    "@unocss/nuxt": "^0.58.5",
+    "nuxt-primevue": "^0.3.0"
+  }
+}
