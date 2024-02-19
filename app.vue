@@ -1,11 +1,19 @@
 <script setup lang="ts">
-import type { FileUploadUploadEvent, FileUploadUploaderEvent } from 'primevue/fileupload';
- 
-function upload(event: FileUploadUploaderEvent) {
-    $fetch('/api/test-upload', {
-      method: 'POST',
-      body: event
-    })
+import type { FileUploadProgressEvent, FileUploadUploadEvent, FileUploadUploaderEvent } from 'primevue/fileupload';
+
+const uploadProgress = ref();
+
+async function uploader(event: FileUploadUploaderEvent) {
+  console.debug('Upload')
+  const response = await $fetch('/api/test-upload', {
+    method: 'POST',
+    body: event
+  })
+  // console.log(response)
+}
+
+function onUploadProgress(event: FileUploadProgressEvent) {
+  uploadProgress.value = event.progress; 
 }
 
 
@@ -31,8 +39,13 @@ function useModelUploader() {
     <FileUpload mode="basic" name="file[]"
       accept="image/*" 
       customUpload 
-      @uploader="upload"
+      :auto="false"
+      @uploader="uploader"
+      @progress="onUploadProgress"
     />
+
+    
+    <ProgressBar :value="uploadProgress"></ProgressBar>
 
   </div>
 </template>
