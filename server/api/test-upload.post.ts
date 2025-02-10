@@ -4,7 +4,7 @@ export default defineEventHandler(async (event) => {
     console.log(formData);
     
     return {
-      status: 400,
+      status: 200,
       message: 'agsas'
     }
   })

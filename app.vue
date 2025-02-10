@@ -4,11 +4,27 @@ import type { FileUploadProgressEvent, FileUploadUploadEvent, FileUploadUploader
 const uploadProgress = ref();
 
 async function uploader(event: FileUploadUploaderEvent) {
-  console.debug('Upload')
-  const response = await $fetch('/api/test-upload', {
-    method: 'POST',
-    body: event
-  })
+  console.debug('Upload') 
+  const form = new FormData();
+  const handle = 'file';
+
+  if (Array.isArray(event.files)) {
+    event.files.forEach((file) => {
+      form.append(handle, file as File);
+    });
+  } else {
+    form.append(handle, event.files as File);
+  }
+
+  const createExampleUploader = useExampleUploader();
+  const performUpload = createExampleUploader.uploadFiles();
+
+  const result = await performUpload(form);
+  
+  // const response = await $fetch('/api/test-upload', {
+  //   method: 'POST',
+  //   body: event
+  // })
   // console.log(response)
 }
 
@@ -22,11 +38,22 @@ function onUploadProgress(event: FileUploadProgressEvent) {
  * 
  * This is a mock function that wraps the interface of our Upload API
  */
-function useModelUploader() {
-  const uploadFiles = (id: string | number) => {
-    return (formData: any | FormData, requestOptions: any) => {
-      
+function useExampleUploader() {
+  const uploadFiles = (id?: string | number) => {
+    return async(formData: any | FormData, requestOptions?: any) => {
+      const xhrResponse = await $fetch('/api/test-upload', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      return xhrResponse;
     }
+  }
+
+  return {
+    uploadFiles
   }
 }
 
@@ -36,9 +63,22 @@ function useModelUploader() {
   <div>
     <h2>Upload Component</h2>
 
+    <h3>Basic</h3>
     <FileUpload mode="basic" name="file[]"
       accept="image/*" 
       customUpload 
+      :multiple="true"
+      :auto="false"
+      @uploader="uploader"
+      @progress="onUploadProgress"
+    />
+
+
+    <h3>Advanced</h3>
+    <FileUpload mode="advanced" name="file[]"
+      accept="image/*" 
+      customUpload 
+      :multiple="true"
       :auto="false"
       @uploader="uploader"
       @progress="onUploadProgress"
